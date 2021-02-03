@@ -3,6 +3,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { ThemeProvider } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
+import { DefaultSeo } from 'next-seo'
 import theme from '../src/theme'
 
 import * as gtag from '../src/lib/gtag'
@@ -10,6 +11,10 @@ import * as gtag from '../src/lib/gtag'
 import { AppProps } from 'next/dist/next-server/lib/router/router'
 
 const isProduction = process.env.NODE_ENV === 'production'
+
+const title = 'Time in Canada Calculator'
+const description = 'Simple time in canada calculator to help permanent residents seeking citizenship.'
+const url = 'https://time-in-canada.vercel.app/'
 
 const MyApp: FC<AppProps> = (props) => {
   const { Component, pageProps } = props
@@ -36,8 +41,19 @@ const MyApp: FC<AppProps> = (props) => {
 
   return (
     <React.Fragment>
+      <DefaultSeo
+        title={title}
+        description={description}
+        canonical={url}
+        openGraph={{
+          url,
+          title,
+          description,
+          site_name: title,
+        }}
+      />
       <Head>
-        <title>Time in Canada Calculator</title>
+        <title></title>
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
       </Head>
       <ThemeProvider theme={theme}>

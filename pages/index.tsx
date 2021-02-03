@@ -163,7 +163,7 @@ const Home: React.FC = () => {
             </Button>
           </Box>
         </Box>
-        <Box my={8} fontStyle="italic">
+        <Box mt={30} mb={8} fontStyle="italic">
           <Typography variant="caption">
             This is an unofficial tool and for reference use only.
             <br />
@@ -173,6 +173,13 @@ const Home: React.FC = () => {
               target="_blank"
               rel="noreferrer"
             >
+              here
+            </a>
+            .
+            <br />
+            <br />
+            You can also check out the code{' '}
+            <a href="" target="_blank" rel="noreferrer">
               here
             </a>
             .
