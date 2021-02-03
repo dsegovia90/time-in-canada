@@ -1,20 +1,38 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import { ThemeProvider } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import theme from '../src/theme'
+
+import * as gtag from '../src/lib/gtag'
+
 import { AppProps } from 'next/dist/next-server/lib/router/router'
+
+const isProduction = process.env.NODE_ENV === 'production'
 
 const MyApp: FC<AppProps> = (props) => {
   const { Component, pageProps } = props
+  const router = useRouter()
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Remove the server-side injected CSS.
     const jssStyles = document.querySelector('#jss-server-side')
     if (jssStyles) {
       jssStyles.parentElement.removeChild(jssStyles)
     }
   }, [])
+
+  useEffect(() => {
+    const handleRouteChange = (url: URL) => {
+      /* invoke analytics function only for production */
+      if (isProduction) gtag.pageview(url)
+    }
+    router.events.on('routeChangeComplete', handleRouteChange)
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange)
+    }
+  }, [router.events])
 
   return (
     <React.Fragment>
