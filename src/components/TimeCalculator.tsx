@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, Button, IconButton, TextField, Typography } from '@material-ui/core'
 import LuxonUtils from '@date-io/luxon'
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
@@ -18,6 +18,10 @@ const TimeCalculator: React.FC = () => {
   const [travels, setTravels] = useState<TravelItem[]>([])
   const [counter, setCounter] = useState<number>(1)
   const [edited, setEdited] = useState<boolean>(false)
+
+  useEffect(() => {
+    window.parent.postMessage('resizeTimeCalculator', '*')
+  }, [travels])
 
   const handleTimeChange = (date: DateTime) => {
     setLandingDate(date)
@@ -69,92 +73,99 @@ const TimeCalculator: React.FC = () => {
 
   return (
     <MuiPickersUtilsProvider utils={LuxonUtils}>
-      <Box mb={1}>
-        <Typography variant="h5">Time in Canada:</Typography>
-      </Box>
-      <Box mb={3}>
-        <Typography>
-          {getTimeInCanada()} days out of 1,095 needed. You are at {((getTimeInCanada() / 1095) * 100).toFixed(2)}%
-        </Typography>
-      </Box>
-      <Box>
-        <KeyboardDatePicker
-          onChange={handleTimeChange}
-          variant="inline"
-          format="yyyy/MM/dd"
-          value={landingDate}
-          label="Landing Date:"
-          disableFuture
-          autoOk
-        />
-      </Box>
-      <Box mt={5}>
-        <Typography variant="h5">Travel History Outside Canada</Typography>
-      </Box>
-      {travels.map((travel, idx) => {
-        const error = travels.reduce((acc, travelCheck, jdx) => {
-          if (acc || idx === jdx) return acc
-          const fromIsBetween = travel.from > travelCheck.from && travel.from < travelCheck.to
-          const toIsBetween = travel.to > travelCheck.from && travel.to < travelCheck.to
-          const isWrapping = travel.from < travelCheck.from && travel.to > travelCheck.to
-          return acc || fromIsBetween || toIsBetween || isWrapping
-        }, false)
-        return (
-          <Box key={travel.uuid} my={3}>
-            <Box>
-              <TextField
-                variant="filled"
-                value={travel.displayName}
-                onChange={updateDisplayName(idx)}
-                InputProps={{ disableUnderline: true }}
-                label={idx === 0 && !edited ? 'This is editable' : ''}
-              />
-            </Box>
-            <Box display="flex" py={5} px={1.5} style={{ border: '2px solid #e3e3e3', borderRadius: '0 4px 4px 4px' }}>
-              <Box mr={3}>
-                <KeyboardDatePicker
-                  onChange={handleTravelChange(idx, 'from')}
-                  variant="inline"
-                  format="yyyy/MM/dd"
-                  value={travel.from}
-                  minDate={landingDate}
-                  maxDate={travel.to}
-                  label="From:"
-                  disableFuture
-                  autoOk
-                  error={error}
-                  helperText={error ? 'Overlapping dates.' : ''}
-                />
-              </Box>
+      <>
+        <Box mb={1}>
+          <Typography variant="h5">Time in Canada:</Typography>
+        </Box>
+        <Box mb={3}>
+          <Typography>
+            {getTimeInCanada()} days out of 1,095 needed. You are at {((getTimeInCanada() / 1095) * 100).toFixed(2)}%
+          </Typography>
+        </Box>
+        <Box>
+          <KeyboardDatePicker
+            onChange={handleTimeChange}
+            variant="inline"
+            format="yyyy/MM/dd"
+            value={landingDate}
+            label="Landing Date:"
+            disableFuture
+            autoOk
+          />
+        </Box>
+        <Box mt={5}>
+          <Typography variant="h5">Travel History Outside Canada</Typography>
+        </Box>
+        {travels.map((travel, idx) => {
+          const error = travels.reduce((acc, travelCheck, jdx) => {
+            if (acc || idx === jdx) return acc
+            const fromIsBetween = travel.from > travelCheck.from && travel.from < travelCheck.to
+            const toIsBetween = travel.to > travelCheck.from && travel.to < travelCheck.to
+            const isWrapping = travel.from < travelCheck.from && travel.to > travelCheck.to
+            return acc || fromIsBetween || toIsBetween || isWrapping
+          }, false)
+          return (
+            <Box key={travel.uuid} my={3}>
               <Box>
-                <KeyboardDatePicker
-                  onChange={handleTravelChange(idx, 'to')}
-                  variant="inline"
-                  format="yyyy/MM/dd"
-                  value={travel.to}
-                  minDate={travel.from}
-                  label="To:"
-                  disableFuture
-                  autoOk
-                  error={error}
+                <TextField
+                  variant="filled"
+                  value={travel.displayName}
+                  onChange={updateDisplayName(idx)}
+                  InputProps={{ disableUnderline: true }}
+                  label={idx === 0 && !edited ? 'This is editable' : ''}
                 />
               </Box>
-              <IconButton
-                onClick={() => {
-                  removeTravel(idx)
-                }}
+              <Box
+                display="flex"
+                py={5}
+                px={1.5}
+                style={{ border: '2px solid #e3e3e3', borderRadius: '0 4px 4px 4px' }}
               >
-                <Delete />
-              </IconButton>
+                <Box mr={3}>
+                  <KeyboardDatePicker
+                    onChange={handleTravelChange(idx, 'from')}
+                    variant="inline"
+                    format="yyyy/MM/dd"
+                    value={travel.from}
+                    minDate={landingDate}
+                    maxDate={travel.to}
+                    label="From:"
+                    disableFuture
+                    autoOk
+                    error={error}
+                    helperText={error ? 'Overlapping dates.' : ''}
+                  />
+                </Box>
+                <Box>
+                  <KeyboardDatePicker
+                    onChange={handleTravelChange(idx, 'to')}
+                    variant="inline"
+                    format="yyyy/MM/dd"
+                    value={travel.to}
+                    minDate={travel.from}
+                    label="To:"
+                    disableFuture
+                    autoOk
+                    error={error}
+                  />
+                </Box>
+                <IconButton
+                  onClick={() => {
+                    removeTravel(idx)
+                  }}
+                >
+                  <Delete />
+                </IconButton>
+              </Box>
             </Box>
-          </Box>
-        )
-      })}
-      <Box mt={5}>
-        <Button variant="contained" color="primary" onClick={addTravel}>
-          Add new travel
-        </Button>
-      </Box>
+          )
+        })}
+        <Box mt={5}>
+          <Button variant="contained" color="primary" onClick={addTravel}>
+            Add new travel
+          </Button>
+        </Box>
+      </>
     </MuiPickersUtilsProvider>
   )
 }

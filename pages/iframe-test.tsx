@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Box, Container, Typography } from '@material-ui/core'
 
 const Home: React.FC = () => {
@@ -6,6 +6,15 @@ const Home: React.FC = () => {
     const iframe = document.getElementById('time-in-canada-iframe')
     iframe.style.height = iframe.contentWindow.document.documentElement.scrollHeight + 'px'
   }
+
+  useEffect(() => {
+    window.addEventListener('message', (event) => {
+      if (event.data === 'resizeTimeCalculator' && event.origin === 'https://time-in-canada.vercel.app') {
+        console.log(event)
+        resizeIframe()
+      }
+    })
+  }, [])
 
   return (
     <Container>
