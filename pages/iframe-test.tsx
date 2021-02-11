@@ -3,20 +3,17 @@ import { Box, Container, Typography } from '@material-ui/core'
 import Head from 'next/head'
 
 const Home: React.FC = () => {
+  const markup = () => ({
+    __html:
+      '<iframe id="time-in-canada-iframe" frameBorder="0" scrolling="no" style="display: block; width: 100%; border: none; height: 284px" src="/time-in-canada-iframe"></iframe>',
+  })
+
   return (
     <Container>
       <Head>
         <script src="./time-in-canada-script.js" />
       </Head>
-      <Box my={10}>
-        <iframe
-          id="time-in-canada-iframe"
-          frameBorder="0"
-          scrolling="no"
-          style={{ display: 'block', width: '100%', border: 'none' }}
-          src="/time-in-canada-iframe"
-        />
-      </Box>
+      <Box my={10} dangerouslySetInnerHTML={markup()}></Box>
       <Box mt={30} mb={8} fontStyle="italic">
         <Typography variant="caption">
           This is an unofficial tool and for reference use only.

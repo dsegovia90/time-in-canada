@@ -4,7 +4,7 @@ window.resizeIframe = () => {
 }
 
 window.addEventListener('message', (event) => {
-  if (event.data === 'resizeTimeCalculator' && event.origin === 'https://time-in-canada.vercel.app') {
+  if (event.data === 'resizeTimeCalculator') {
     resizeIframe()
   }
 })
