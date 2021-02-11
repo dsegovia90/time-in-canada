@@ -21,6 +21,10 @@ const TimeCalculator: React.FC = () => {
 
   useEffect(() => {
     window.parent.postMessage('resizeTimeCalculator', '*')
+  }, [])
+
+  useEffect(() => {
+    window.parent.postMessage('resizeTimeCalculator', '*')
   }, [travels])
 
   const handleTimeChange = (date: DateTime) => {
