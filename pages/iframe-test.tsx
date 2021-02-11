@@ -1,12 +1,23 @@
 import React from 'react'
 import { Box, Container, Typography } from '@material-ui/core'
-import TimeCalculator from '../src/components/TimeCalculator'
 
 const Home: React.FC = () => {
+  function resizeIframe() {
+    const iframe = document.getElementById('time-in-canada-iframe')
+    iframe.style.height = iframe.contentWindow.document.documentElement.scrollHeight + 'px'
+  }
+
   return (
     <Container>
       <Box my={10}>
-        <TimeCalculator />
+        <iframe
+          id="time-in-canada-iframe"
+          frameBorder="0"
+          scrolling="no"
+          style={{ display: 'block', width: '100%', border: 'none' }}
+          src="/time-in-canada-iframe"
+          onLoad={resizeIframe}
+        />
       </Box>
       <Box mt={30} mb={8} fontStyle="italic">
         <Typography variant="caption">
